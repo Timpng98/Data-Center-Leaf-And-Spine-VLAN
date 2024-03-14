@@ -1,0 +1,428 @@
+--------------------------------------------CL1-------------------------------------------
+CL1:
+cumulus
+cumulus 
+pass telecomS144
+sudo ztp -d
+net add loopback lo ip address 10.0.0.1/32
+net add interface swp1-2
+net add interface swp4
+net pending
+net add bgp autonomous-system 65000
+net add bgp router-id 10.0.0.1
+net pending
+net add bgp bestpath as-path multipath-relax
+net add bgp neighbor LEAF peer-group
+net add bgp neighbor LEAF remote-as external
+net pending
+net add bgp neighbor swp1-2 interface peer-group LEAF
+net add bgp neighbor swp4 interface peer-group LEAF
+net add bgp ipv4 unicast network 10.0.0.1/32
+net add bgp ipv6 unicast neighbor LEAF activate
+net pending
+net commit
+net add bgp l2vpn evpn neighbor LEAF activate
+net pending 
+net commit
+
+--------------------------------------------CL2-------------------------------------------
+CL2:
+cumulus
+cumulus 
+pass telecomS144
+sudo ztp -d
+net add loopback lo ip address 10.0.0.2/32
+net add interface swp1-2
+net add interface swp5
+net pending
+net add bgp autonomous-system 65000
+net add bgp router-id 10.0.0.2
+net pending
+net add bgp bestpath as-path multipath-relax
+net add bgp neighbor LEAF peer-group
+net add bgp neighbor LEAF remote-as external
+net pending
+net add bgp neighbor swp1-2 interface peer-group LEAF
+net add bgp neighbor swp5 interface peer-group LEAF
+net add bgp ipv4 unicast network 10.0.0.2/32
+net add bgp ipv6 unicast neighbor LEAF activate
+net pending
+net commit
+net add bgp l2vpn evpn neighbor LEAF activate
+net pending 
+net commit
+
+--------------------------------------------CL3-------------------------------------------
+CL3:
+cumulus
+cumulus 
+pass telecomS144
+sudo ztp -d
+net add loopback lo ip address 10.0.0.3/32
+net add interface swp1-2
+net pending
+net add bgp autonomous-system 65003
+net add bgp router-id 10.0.0.3
+net pending
+net add bgp bestpath as-path multipath-relax
+net add bgp neighbor SPINE peer-group
+net add bgp neighbor SPINE remote-as external
+net pending
+net add bgp neighbor swp1-2 interface peer-group SPINE
+net add bgp ipv4 unicast network 10.0.0.3/32
+net add bgp ipv6 unicast neighbor SPINE activate
+net pending
+net commit
+net add interface swp3
+net add bridge bridge ports swp3,vni10,vni20,vni30
+net add bridge bridge vids 10,20,30
+net add vxlan vni10 vxlan id 10
+net add vxlan vni20 vxlan id 20
+net add vxlan vni30 vxlan id 30
+net add vxlan vni10 bridge access 10
+net add vxlan vni20 bridge access 20
+net add vxlan vni30 bridge access 30
+net add vxlan vni10 vxlan local-tunnelip 10.0.0.3
+net add vxlan vni20 vxlan local-tunnelip 10.0.0.3
+net add vxlan vni30 vxlan local-tunnelip 10.0.0.3
+net pending
+net commit
+net add bgp l2vpn evpn neighbor SPINE activate
+net add bgp l2vpn evpn advertise-all-vni
+net pending 
+net commit
+net add bgp l2vpn evpn vni 10 rd 65003:10
+net add bgp l2vpn evpn vni 20 rd 65003:20
+net add bgp l2vpn evpn vni 30 rd 65003:30
+net add bgp l2vpn evpn vni 10 route-target import 65004:10
+net add bgp l2vpn evpn vni 10 route-target import 65005:10
+net add bgp l2vpn evpn vni 20 route-target import 65004:20
+net add bgp l2vpn evpn vni 20 route-target import 65005:20
+net add bgp l2vpn evpn vni 30 route-target import 65004:30
+net add bgp l2vpn evpn vni 30 route-target import 65005:30
+net pending
+net commit
+
+--------------------------------------------CL4-------------------------------------------
+CL4:
+cumulus
+cumulus
+pass telecomS144
+sudo ztp -d
+net add loopback lo ip address 10.0.0.4/32
+net add interface swp4-5
+net pending
+net add bgp autonomous-system 65004
+net add bgp router-id 10.0.0.4
+net pending
+net add bgp bestpath as-path multipath-relax
+net add bgp neighbor SPINE peer-group
+net add bgp neighbor SPINE remote-as external
+net pending
+net add bgp neighbor swp4-5 interface peer-group SPINE
+net add bgp ipv4 unicast network 10.0.0.4/32
+net add bgp ipv6 unicast neighbor SPINE activate
+net pending
+net commit
+net add interface swp3
+net add bridge bridge ports swp3,vni10,vni20,vni30
+net add bridge bridge vids 10,20,30
+net add vxlan vni10 vxlan id 10
+net add vxlan vni20 vxlan id 20
+net add vxlan vni30 vxlan id 30
+net add vxlan vni10 bridge access 10
+net add vxlan vni20 bridge access 20
+net add vxlan vni30 bridge access 30
+net add vxlan vni10 vxlan local-tunnelip 10.0.0.4
+net add vxlan vni20 vxlan local-tunnelip 10.0.0.4
+net add vxlan vni30 vxlan local-tunnelip 10.0.0.4
+net pending
+net commit
+net add bgp l2vpn evpn neighbor SPINE activate
+net add bgp l2vpn evpn advertise-all-vni
+net pending 
+net commit
+net add bgp l2vpn evpn vni 10 rd 65004:10
+net add bgp l2vpn evpn vni 20 rd 65004:20
+net add bgp l2vpn evpn vni 30 rd 65004:30
+net add bgp l2vpn evpn vni 10 route-target import 65003:10
+net add bgp l2vpn evpn vni 10 route-target import 65005:10
+net add bgp l2vpn evpn vni 20 route-target import 65003:20
+net add bgp l2vpn evpn vni 20 route-target import 65005:20
+net add bgp l2vpn evpn vni 30 route-target import 65003:30
+net add bgp l2vpn evpn vni 30 route-target import 65005:30
+net pending
+net commit
+
+--------------------------------------------CL5-------------------------------------------
+CL5:
+cumulus
+cumulus
+pass telecomS144
+sudo ztp -d
+net add loopback lo ip address 10.0.0.5/32
+net add interface swp1-2
+net pending
+net add bgp autonomous-system 65005
+net add bgp router-id 10.0.0.5
+net pending
+net add bgp bestpath as-path multipath-relax
+net add bgp neighbor SPINE peer-group
+net add bgp neighbor SPINE remote-as external
+net pending
+net add bgp neighbor swp1-2 interface peer-group SPINE
+net add bgp ipv4 unicast network 10.0.0.5/32
+net add bgp ipv6 unicast neighbor SPINE activate
+net pending
+net commit
+net add interface swp3
+net add bridge bridge ports swp3,vni10,vni20,vni30
+net add bridge bridge vids 10,20,30
+net add vxlan vni10 vxlan id 10
+net add vxlan vni20 vxlan id 20
+net add vxlan vni30 vxlan id 30
+net add vxlan vni10 bridge access 10
+net add vxlan vni20 bridge access 20
+net add vxlan vni30 bridge access 30
+net add vxlan vni10 vxlan local-tunnelip 10.0.0.5
+net add vxlan vni20 vxlan local-tunnelip 10.0.0.5
+net add vxlan vni30 vxlan local-tunnelip 10.0.0.5
+net pending
+net commit
+net add bgp l2vpn evpn neighbor SPINE activate
+net add bgp l2vpn evpn advertise-all-vni
+net pending 
+net commit
+net add bgp l2vpn evpn vni 10 rd 65005:10
+net add bgp l2vpn evpn vni 20 rd 65005:20
+net add bgp l2vpn evpn vni 30 rd 65005:30
+net add bgp l2vpn evpn vni 10 route-target import 65004:10
+net add bgp l2vpn evpn vni 10 route-target import 65003:10
+net add bgp l2vpn evpn vni 20 route-target import 65004:20
+net add bgp l2vpn evpn vni 20 route-target import 65003:20
+net add bgp l2vpn evpn vni 30 route-target import 65004:30
+net add bgp l2vpn evpn vni 30 route-target import 65003:30
+net pending
+net commit
+
+--------------------------------------------R3-------------------------------------------
+R3:
+!
+ip vrf 10
+!
+ip vrf 20
+!
+ip vrf 30
+!
+int lo0
+ip address 10.3.3.3 255.255.255.255
+!
+int lo10
+ip vrf forwarding 10
+ip address 10.10.3.3 255.255.255.255
+!
+int lo20
+ip vrf forwarding 20
+ip address 10.20.3.3 255.255.255.255
+!
+int lo30
+ip vrf forwarding 30
+ip address 10.30.3.3 255.255.255.255
+!
+int f0/0
+no shut
+!
+int f0/0.10
+ip vrf forwarding 10
+encapsulation dot1q 10
+ip address 192.168.3.1 255.255.255.192
+!
+int f0/0.20
+ip vrf forwarding 20
+encapsulation dot1q 20
+ip address 192.168.3.65 255.255.255.192
+!
+int f0/0.30
+ip vrf forwarding 30
+encapsulation dot1q 30
+ip address 192.168.3.129 255.255.255.192
+!
+int f1/0
+no shut
+!
+int f1/0.10
+ip vrf forwarding 10
+encapsulation dot1q 10
+ip address 10.0.10.3 255.255.255.0
+!
+int f1/0.20
+ip vrf forwarding 20
+encapsulation dot1q 20
+ip address 10.0.20.3 255.255.255.0
+!
+int f1/0.30
+ip vrf forwarding 30
+encapsulation dot1q 30
+ip address 10.0.30.3 255.255.255.0
+!
+router ospf 10 vrf 10
+router-id 10.10.3.3
+network 0.0.0.0 0.0.0.0 area 0
+!
+router ospf 20 vrf 20
+router-id 10.20.3.3
+network 0.0.0.0 0.0.0.0 area 0
+!
+router ospf 30 vrf 30
+router-id 10.30.3.3
+network 0.0.0.0 0.0.0.0 area 0
+!
+end
+
+--------------------------------------------R4-------------------------------------------
+R4:
+!
+ip vrf 10
+!
+ip vrf 20
+!
+ip vrf 30
+!
+int lo0
+ip address 10.4.4.4 255.255.255.255
+!
+int lo10
+ip vrf forwarding 10
+ip address 10.10.4.4 255.255.255.255
+!
+int lo20
+ip vrf forwarding 20
+ip address 10.20.4.4 255.255.255.255
+!
+int lo30
+ip vrf forwarding 30
+ip address 10.30.4.4 255.255.255.255
+!
+int f0/0
+no shut
+!
+int f0/0.10
+ip vrf forwarding 10
+encapsulation dot1q 10
+ip address 192.168.4.1 255.255.255.192
+!
+int f0/0.20
+ip vrf forwarding 20
+encapsulation dot1q 20
+ip address 192.168.4.65 255.255.255.192
+!
+int f0/0.30
+ip vrf forwarding 30
+encapsulation dot1q 30
+ip address 192.168.4.129 255.255.255.192
+!
+int f1/0
+no shut
+!
+int f1/0.10
+ip vrf forwarding 10
+encapsulation dot1q 10
+ip address 10.0.10.4 255.255.255.0
+!
+int f1/0.20
+ip vrf forwarding 20
+encapsulation dot1q 20
+ip address 10.0.20.4 255.255.255.0
+!
+int f1/0.30
+ip vrf forwarding 30
+encapsulation dot1q 30
+ip address 10.0.30.4 255.255.255.0
+!
+router ospf 10 vrf 10
+router-id 10.10.4.4
+network 0.0.0.0 0.0.0.0 area 0
+!
+router ospf 20 vrf 20
+router-id 10.20.4.4
+network 0.0.0.0 0.0.0.0 area 0
+!
+router ospf 30 vrf 30
+router-id 10.30.4.4
+network 0.0.0.0 0.0.0.0 area 0
+!
+end
+
+--------------------------------------------R5-------------------------------------------
+R5:
+!
+ip vrf 10
+!
+ip vrf 20
+!
+ip vrf 30
+!
+int lo0
+ip address 10.5.5.5 255.255.255.255
+!
+int lo10
+ip vrf forwarding 10
+ip address 10.10.5.5 255.255.255.255
+!
+int lo20
+ip vrf forwarding 20
+ip address 10.20.5.5 255.255.255.255
+!
+int lo30
+ip vrf forwarding 30
+ip address 10.30.5.5 255.255.255.255
+!
+int f0/0
+no shut
+!
+int f0/0.10
+ip vrf forwarding 10
+encapsulation dot1q 10
+ip address 192.168.5.1 255.255.255.192
+!
+int f0/0.20
+ip vrf forwarding 20
+encapsulation dot1q 20
+ip address 192.168.5.65 255.255.255.192
+!
+int f0/0.30
+ip vrf forwarding 30
+encapsulation dot1q 30
+ip address 192.168.5.129 255.255.255.192
+!
+int f1/0
+no shut
+!
+int f1/0.10
+ip vrf forwarding 10
+encapsulation dot1q 10
+ip address 10.0.10.5 255.255.255.0
+!
+int f1/0.20
+ip vrf forwarding 20
+encapsulation dot1q 20
+ip address 10.0.20.5 255.255.255.0
+!
+int f1/0.30
+ip vrf forwarding 30
+encapsulation dot1q 30
+ip address 10.0.30.5 255.255.255.0
+!
+router ospf 10 vrf 10
+router-id 10.10.5.5
+network 0.0.0.0 0.0.0.0 area 0
+!
+router ospf 20 vrf 20
+router-id 10.20.5.5
+network 0.0.0.0 0.0.0.0 area 0
+!
+router ospf 30 vrf 30
+router-id 10.30.5.5
+network 0.0.0.0 0.0.0.0 area 0
+!
+end
